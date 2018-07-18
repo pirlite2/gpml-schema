@@ -1,0 +1,111 @@
+<?xml version='1.0'?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	
+	<xs:annotation>
+		<xs:documentation> XML Schema for Genetic Programming Markup Language (GPML)
+		Copyright (C) 2017 Peter Rockett
+		
+		This program is free software: you can redistribute it and/or modify
+		it under the terms of the GNU General Public License as published by
+		the Free Software Foundation, either version 3 of the License, or
+		(at your option) any later version.
+
+		This program is distributed in the hope that it will be useful,
+		but WITHOUT ANY WARRANTY; without even the implied warranty of
+		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+		GNU General Public License for more details.
+
+		You should have received a copy of the GNU General Public License
+		along with this program.  If not, see http://www.gnu.org/licenses/.
+		</xs:documentation>
+	</xs:annotation>
+	
+	<xs:complexType name="terminalNodeType">
+		<xs:attribute name="vectorIndex" type="xs:nonNegativeInteger" use="required" />
+	</xs:complexType>
+	
+	<xs:complexType name="constantNodeType">
+		<xs:attribute name="value" type="xs:double" use="required" />
+	</xs:complexType>
+	
+	<xs:complexType name="unaryNodeType">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="terminalNode" type="terminalNodeType" />
+				<xs:element name="constantNode" type="constantNodeType" />
+				<xs:element name="unaryNode" type="unaryNodeType" />
+				<xs:element name="binaryNode" type="binaryNodeType" />
+				<xs:element name="ternaryNode" type="ternaryNodeType" />
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="operation" type="xs:token" use="required" />
+		<xs:attribute name="parameterString" type="xs:token" use="optional" />
+	</xs:complexType>
+	
+	<xs:complexType name="binaryNodeType">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="terminalNode" type="terminalNodeType" />
+				<xs:element name="constantNode" type="constantNodeType" />
+				<xs:element name="unaryNode" type="unaryNodeType" />
+				<xs:element name="binaryNode" type="binaryNodeType" />
+				<xs:element name="ternaryNode" type="ternaryNodeType" />
+			</xs:choice>
+			<xs:choice>
+				<xs:element name="terminalNode" type="terminalNodeType" />
+				<xs:element name="constantNode" type="constantNodeType" />
+				<xs:element name="unaryNode" type="unaryNodeType" />
+				<xs:element name="binaryNode" type="binaryNodeType" />
+				<xs:element name="ternaryNode" type="ternaryNodeType" />
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="operation" type="xs:token" use="required" />
+		<xs:attribute name="parameterString" type="xs:token" use="optional" />
+	</xs:complexType>
+	
+	<xs:complexType name="ternaryNodeType">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element name="terminalNode" type="terminalNodeType" />
+				<xs:element name="constantNode" type="constantNodeType" />
+				<xs:element name="unaryNode" type="unaryNodeType" />
+				<xs:element name="binaryNode" type="binaryNodeType" />
+				<xs:element name="ternaryNode" type="ternaryNodeType" />
+			</xs:choice>
+			<xs:choice>
+				<xs:element name="terminalNode" type="terminalNodeType" />
+				<xs:element name="constantNode" type="constantNodeType" />
+				<xs:element name="unaryNode" type="unaryNodeType" />
+				<xs:element name="binaryNode" type="binaryNodeType" />
+				<xs:element name="ternaryNode" type="ternaryNodeType" />
+			</xs:choice>
+			<xs:choice>
+				<xs:element name="terminalNode" type="terminalNodeType" />
+				<xs:element name="constantNode" type="constantNodeType" />
+				<xs:element name="unaryNode" type="unaryNodeType" />
+				<xs:element name="binaryNode" type="binaryNodeType" />
+				<xs:element name="ternaryNode" type="ternaryNodeType" />
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="operation" type="xs:token" use="required" />
+		<xs:attribute name="parameterString" type="xs:token" use="optional" />
+	</xs:complexType>
+	
+	<xs:element name="gpTree">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="comment" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+				<xs:choice>
+					<xs:element name="terminalNode" type="terminalNodeType" />
+					<xs:element name="constantNode" type="constantNodeType" />
+					<xs:element name="unaryNode" type="unaryNodeType" />
+					<xs:element name="binaryNode" type="binaryNodeType" />
+					<xs:element name="ternaryNode" type="ternaryNodeType" />
+				</xs:choice>
+			</xs:sequence>
+			<xs:attribute name="noVectorElements" type="xs:positiveInteger" use="required" />
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>
