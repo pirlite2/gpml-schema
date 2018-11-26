@@ -4,7 +4,7 @@
 	
 	<xs:annotation>
 		<xs:documentation> XML Schema for Genetic Programming Markup Language (GPML)
-		Copyright (C) 2017 Peter Rockett
+		Copyright (C) 2017-2018  - Peter Rockett
 		
 		This program is free software: you can redistribute it and/or modify
 		it under the terms of the GNU General Public License as published by
@@ -91,6 +91,13 @@
 		<xs:attribute name="operation" type="xs:token" use="required" />
 		<xs:attribute name="parameterString" type="xs:token" use="optional" />
 	</xs:complexType>
+
+	<xs:simpleType name="firstIndexType">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value ="0" />
+			<xs:enumeration value ="1" />
+		</xs:restriction>
+	</xs:simpleType>
 	
 	<xs:element name="gpTree">
 		<xs:complexType>
@@ -105,6 +112,7 @@
 				</xs:choice>
 			</xs:sequence>
 			<xs:attribute name="noVectorElements" type="xs:positiveInteger" use="required" />
+			<xs:attribute name="firstIndex" type="firstIndexType" use="required" />
 		</xs:complexType>
 	</xs:element>
 
