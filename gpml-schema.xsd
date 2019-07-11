@@ -1,10 +1,8 @@
-<?xml version='1.0'?>
-
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-	
-	<xs:annotation>
-		<xs:documentation> XML Schema for Genetic Programming Markup Language (GPML)
-		Copyright (C) 2017-2018  - Peter Rockett
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="3.0">
+  <xs:annotation>
+    <xs:documentation> XML Schema for Genetic Programming Markup Language (GPML) v3
+		Copyright (C) 2017-2019  - Peter Rockett
 		
 		This program is free software: you can redistribute it and/or modify
 		it under the terms of the GNU General Public License as published by
@@ -18,102 +16,216 @@
 
 		You should have received a copy of the GNU General Public License
 		along with this program.  If not, see http://www.gnu.org/licenses/.
+	</xs:documentation>
+  </xs:annotation>
+  
+  <!-- GPML data type definitions-->
+	<xs:simpleType name="singleCharacterType">
+		<xs:restriction base="xs:string">
+			<xs:length value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="scalarDataType">
+		<xs:union memberTypes="xs:boolean xs:integer xs:double singleCharacterType xs:string"/>
+	</xs:simpleType>
+
+	<xs:annotation>
+		<xs:documentation>
+			Defines format of string within an explicitly listed tuple to be enclosed in single quotes; single quotes within the string need to be represented with the escaped "%apos" sequence
 		</xs:documentation>
 	</xs:annotation>
+	<xs:simpleType name="listTupleStringDataType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="'[.^']*'"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="listDataType">
+		<xs:union memberTypes="xs:boolean xs:integer xs:double singleCharacterType listTupleStringDataType"/>
+	</xs:simpleType>
 	
-	<xs:complexType name="terminalNodeType">
-		<xs:attribute name="vectorIndex" type="xs:nonNegativeInteger" use="required" />
-	</xs:complexType>
-	
-	<xs:complexType name="constantNodeType">
-		<xs:attribute name="value" type="xs:double" use="required" />
-	</xs:complexType>
-	
-	<xs:complexType name="unaryNodeType">
-		<xs:sequence>
-			<xs:choice>
-				<xs:element name="terminalNode" type="terminalNodeType" />
-				<xs:element name="constantNode" type="constantNodeType" />
-				<xs:element name="unaryNode" type="unaryNodeType" />
-				<xs:element name="binaryNode" type="binaryNodeType" />
-				<xs:element name="ternaryNode" type="ternaryNodeType" />
-			</xs:choice>
-		</xs:sequence>
-		<xs:attribute name="operation" type="xs:token" use="required" />
-		<xs:attribute name="parameterString" type="xs:token" use="optional" />
-	</xs:complexType>
-	
-	<xs:complexType name="binaryNodeType">
-		<xs:sequence>
-			<xs:choice>
-				<xs:element name="terminalNode" type="terminalNodeType" />
-				<xs:element name="constantNode" type="constantNodeType" />
-				<xs:element name="unaryNode" type="unaryNodeType" />
-				<xs:element name="binaryNode" type="binaryNodeType" />
-				<xs:element name="ternaryNode" type="ternaryNodeType" />
-			</xs:choice>
-			<xs:choice>
-				<xs:element name="terminalNode" type="terminalNodeType" />
-				<xs:element name="constantNode" type="constantNodeType" />
-				<xs:element name="unaryNode" type="unaryNodeType" />
-				<xs:element name="binaryNode" type="binaryNodeType" />
-				<xs:element name="ternaryNode" type="ternaryNodeType" />
-			</xs:choice>
-		</xs:sequence>
-		<xs:attribute name="operation" type="xs:token" use="required" />
-		<xs:attribute name="parameterString" type="xs:token" use="optional" />
-	</xs:complexType>
-	
-	<xs:complexType name="ternaryNodeType">
-		<xs:sequence>
-			<xs:choice>
-				<xs:element name="terminalNode" type="terminalNodeType" />
-				<xs:element name="constantNode" type="constantNodeType" />
-				<xs:element name="unaryNode" type="unaryNodeType" />
-				<xs:element name="binaryNode" type="binaryNodeType" />
-				<xs:element name="ternaryNode" type="ternaryNodeType" />
-			</xs:choice>
-			<xs:choice>
-				<xs:element name="terminalNode" type="terminalNodeType" />
-				<xs:element name="constantNode" type="constantNodeType" />
-				<xs:element name="unaryNode" type="unaryNodeType" />
-				<xs:element name="binaryNode" type="binaryNodeType" />
-				<xs:element name="ternaryNode" type="ternaryNodeType" />
-			</xs:choice>
-			<xs:choice>
-				<xs:element name="terminalNode" type="terminalNodeType" />
-				<xs:element name="constantNode" type="constantNodeType" />
-				<xs:element name="unaryNode" type="unaryNodeType" />
-				<xs:element name="binaryNode" type="binaryNodeType" />
-				<xs:element name="ternaryNode" type="ternaryNodeType" />
-			</xs:choice>
-		</xs:sequence>
-		<xs:attribute name="operation" type="xs:token" use="required" />
-		<xs:attribute name="parameterString" type="xs:token" use="optional" />
+	<xs:annotation>
+		<xs:documentation>
+		Defines tuple as a text content list; literal string constants are demarcated by being enclosed in apostrophes
+		</xs:documentation>
+	</xs:annotation>
+	<xs:simpleType name="tupleType">
+		<xs:list itemType="listDataType"/>
+	</xs:simpleType>
+
+	<!-- input node definition-->
+	<xs:annotation>
+		<xs:documentation>
+			"tupleIndex" is index into the input tuple.
+		</xs:documentation>
+	</xs:annotation>
+	<xs:complexType name="scalarTerminalNodeType">
+	<xs:attribute name="tupleIndex" type="xs:nonNegativeInteger" use="required"/>
 	</xs:complexType>
 
-	<xs:simpleType name="firstIndexType">
-		<xs:restriction base="xs:integer">
-			<xs:enumeration value ="0" />
-			<xs:enumeration value ="1" />
+	<xs:simpleType name="tupleTerminalNodeType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+  
+	<!-- Constant node definition -->
+	<xs:simpleType name="dataTypeType">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="boolean"/>
+			<xs:enumeration value="integer"/>
+			<xs:enumeration value="double"/>
+			<xs:enumeration value="char"/>
+			<xs:enumeration value="string"/>
+			<xs:enumeration value="tuple"/>
+		</xs:restriction>
+	</xs:simpleType>
+  
+	<xs:simpleType name="constDataType">
+		<xs:union memberTypes="xs:boolean xs:integer xs:double singleCharacterType xs:string tupleType"/>
+	</xs:simpleType>
+
+	<xs:complexType name="constantNodeType">
+		<xs:simpleContent>
+			<xs:extension base="constDataType">
+				<xs:attribute name="dataType" type="dataTypeType" use="optional" default="double"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+  
+	<xs:annotation>
+		<xs:documentation>
+			Restricts "adfNameType" to be a string comprising a letter or underscore followed by any number of alphanumeric characters or underscores. This follows conventional subroutine naming conventions in programming languages
+		</xs:documentation>
+	</xs:annotation>
+	<xs:simpleType name="adfNameType">
+		<xs:restriction base="xs:token">
+			<xs:pattern value="[a-zA-Z_][a-zA-Z_0-9^ ]*"/>
 		</xs:restriction>
 	</xs:simpleType>
 	
-	<xs:element name="gpTree">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element name="comment" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
-				<xs:choice>
-					<xs:element name="terminalNode" type="terminalNodeType" />
-					<xs:element name="constantNode" type="constantNodeType" />
-					<xs:element name="unaryNode" type="unaryNodeType" />
-					<xs:element name="binaryNode" type="binaryNodeType" />
-					<xs:element name="ternaryNode" type="ternaryNodeType" />
-				</xs:choice>
-			</xs:sequence>
-			<xs:attribute name="noVectorElements" type="xs:positiveInteger" use="required" />
-			<xs:attribute name="firstIndex" type="firstIndexType" use="required" />
+	<xs:complexType name="adfCallNodeType">
+		<xs:attribute name="name" type="adfNameType" use="required"/>
+	</xs:complexType>
+  
+  <!-- Internal node definitions-->
+	<xs:complexType name="unaryNodeType">
+		<xs:sequence minOccurs="1" maxOccurs="1">
+			<xs:choice>
+				<xs:element name="input" type="scalarTerminalNodeType"/>
+				<xs:element name="tupleInput" type="tupleTerminalNodeType"/>
+				<xs:element name="constant" type="constantNodeType"/>
+				<xs:element name="adfCall" type="adfCallNodeType"/>
+				<xs:element name="unary" type="unaryNodeType"/>
+				<xs:element name="binary" type="binaryNodeType"/>
+				<xs:element name="ternary" type="ternaryNodeType"/>
+				<xs:element name="nAry" type="nAryNodeType"/>
+			</xs:choice>  
+		</xs:sequence>
+		<xs:attribute name="operation" type="xs:token" use="required"/>
+		<xs:attribute name="parameterString" type="xs:token" use="optional"/>
+	</xs:complexType>
+  
+	<xs:complexType name="binaryNodeType">
+		<xs:sequence minOccurs="2" maxOccurs="2">
+			<xs:choice>
+				<xs:element name="input" type="scalarTerminalNodeType"/>
+				<xs:element name="tupleInput" type="tupleTerminalNodeType"/>
+				<xs:element name="constant" type="constantNodeType"/>
+				<xs:element name="adfCall" type="adfCallNodeType"/>
+				<xs:element name="unary" type="unaryNodeType"/>
+				<xs:element name="binary" type="binaryNodeType"/>
+				<xs:element name="ternary" type="ternaryNodeType"/>
+				<xs:element name="nAry" type="nAryNodeType"/>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="operation" type="xs:token" use="required"/>
+		<xs:attribute name="parameterString" type="xs:token" use="optional"/>
 		</xs:complexType>
+
+	<xs:complexType name="ternaryNodeType">
+		<xs:sequence minOccurs="3" maxOccurs="3">
+			<xs:choice>
+				<xs:element name="input" type="scalarTerminalNodeType"/>
+				<xs:element name="tupleInput" type="tupleTerminalNodeType"/>
+				<xs:element name="constant" type="constantNodeType"/>
+				<xs:element name="adfCall" type="adfCallNodeType"/>
+				<xs:element name="unary" type="unaryNodeType"/>
+				<xs:element name="binary" type="binaryNodeType"/>
+				<xs:element name="ternary" type="ternaryNodeType"/>
+				<xs:element name="nAry" type="nAryNodeType"/>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="operation" type="xs:token" use="required"/>
+		<xs:attribute name="parameterString" type="xs:token" use="optional"/>
+	</xs:complexType>
+
+	<xs:complexType name="nAryNodeType">
+		<xs:sequence minOccurs="1" maxOccurs="unbounded">
+			<xs:choice>
+				<xs:element name="input" type="scalarTerminalNodeType"/>
+				<xs:element name="tupleInput" type="tupleTerminalNodeType"/>
+				<xs:element name="constant" type="constantNodeType"/>
+				<xs:element name="adfCall" type="adfCallNodeType"/>
+				<xs:element name="unary" type="unaryNodeType"/>
+				<xs:element name="binary" type="binaryNodeType"/>
+				<xs:element name="ternary" type="ternaryNodeType"/>
+				<xs:element name="nAry" type="nAryNodeType"/>
+			</xs:choice>
+		</xs:sequence>
+	<xs:attribute name="arity" type="xs:positiveInteger" use="required"/>
+	<xs:attribute name="operation" type="xs:token" use="required"/>
+	<xs:attribute name="parameterString" type="xs:token" use="optional"/>
+	</xs:complexType>
+
+	<!-- ADF definition type-->
+	<xs:complexType name="adfDefinitionType">
+		<xs:choice>
+			<xs:element name="input" type="scalarTerminalNodeType"/>
+			<xs:element name="tupleInput" type="tupleTerminalNodeType"/>
+			<xs:element name="constant" type="constantNodeType"/>
+			<xs:element name="adfCall" type="adfCallNodeType"/>
+			<xs:element name="unary" type="unaryNodeType"/>
+			<xs:element name="binary" type="binaryNodeType"/>
+			<xs:element name="ternary" type="ternaryNodeType"/>
+			<xs:element name="nAry" type="nAryNodeType"/>
+		</xs:choice>
+		<xs:attribute name="name" type="adfNameType" use="required"/>
+	</xs:complexType>
+
+	<!-- Overall tree definition-->
+	<xs:simpleType name="firstIndexType">
+		<xs:restriction base="xs:integer">
+			<xs:enumeration value="0"/>
+			<xs:enumeration value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="gpTreeType">
+		<xs:sequence>
+			<!-- Define zero or more ADF definitions -->
+			<xs:element name="adfDefinition" type="adfDefinitionType" minOccurs="0" maxOccurs="unbounded"/>
+			<!-- Define a single tree root node -->
+			<xs:choice>
+				<xs:element name="input" type="scalarTerminalNodeType"/>
+				<xs:element name="tupleInput" type="tupleTerminalNodeType"/>
+				<xs:element name="constant" type="constantNodeType"/>
+				<xs:element name="adfCall" type="adfCallNodeType"/>
+				<xs:element name="unary" type="unaryNodeType"/>
+				<xs:element name="binary" type="binaryNodeType"/>
+				<xs:element name="ternary" type="ternaryNodeType"/>
+				<xs:element name="nAry" type="nAryNodeType"/>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="noTupleElements" type="xs:positiveInteger" use="required"/>
+		<xs:attribute name="firstIndex" type="firstIndexType" use="required"/>
+	</xs:complexType>
+
+	<xs:element name="gpTree" type="gpTreeType">
+		<xs:unique name="testUniqueADFnames">
+			<!-- Enforce unique ADF names -->
+			<xs:selector xpath="./adfDefinition"/>
+			<xs:field xpath="@name"/>
+		</xs:unique>
 	</xs:element>
 
 </xs:schema>
